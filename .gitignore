@@ -1,0 +1,7 @@
+data/*.db
+data/*.sqlite
+java_manager_app/build/
+python_employee_app/__pycache__/
+python_employee_app/expense_manager/__pycache__/
+.vscode/
+.DS_Store
