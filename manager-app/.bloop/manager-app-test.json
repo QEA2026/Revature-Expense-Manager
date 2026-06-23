@@ -1,0 +1,160 @@
+{
+    "version": "1.4.0",
+    "project": {
+        "name": "manager-app-test",
+        "directory": "/Users/vanessawartemberg/Documents/Revature-Expense-Manager/manager-app",
+        "workspaceDir": "/Users/vanessawartemberg/Documents/Revature-Expense-Manager/manager-app",
+        "sources": [
+            "/Users/vanessawartemberg/Documents/Revature-Expense-Manager/manager-app/src/test/java"
+        ],
+        "dependencies": [
+            "manager-app"
+        ],
+        "classpath": [
+            "/Users/vanessawartemberg/Documents/Revature-Expense-Manager/manager-app/target/test-classes",
+            "/Users/vanessawartemberg/Documents/Revature-Expense-Manager/manager-app/target/classes",
+            "/Users/vanessawartemberg/.m2/repository/junit/junit/3.8.1/junit-3.8.1.jar",
+            "/Users/vanessawartemberg/.m2/repository/org/xerial/sqlite-jdbc/3.45.1.0/sqlite-jdbc-3.45.1.0.jar",
+            "/Users/vanessawartemberg/.m2/repository/org/slf4j/slf4j-api/1.7.36/slf4j-api-1.7.36.jar"
+        ],
+        "out": "/Users/vanessawartemberg/Documents/Revature-Expense-Manager/manager-app/target",
+        "classesDir": "/Users/vanessawartemberg/Documents/Revature-Expense-Manager/manager-app/target/test-classes",
+        "resources": [
+            "/Users/vanessawartemberg/Documents/Revature-Expense-Manager/manager-app/src/test/resources"
+        ],
+        "java": {
+            "options": [
+                "-g",
+                "-encoding",
+                "UTF-8"
+            ]
+        },
+        "test": {
+            "frameworks": [
+                {
+                    "names": [
+                        "com.novocode.junit.JUnitFramework"
+                    ]
+                },
+                {
+                    "names": [
+                        "org.scalatest.tools.Framework",
+                        "org.scalatest.tools.ScalaTestFramework"
+                    ]
+                },
+                {
+                    "names": [
+                        "org.scalacheck.ScalaCheckFramework"
+                    ]
+                },
+                {
+                    "names": [
+                        "org.specs.runner.SpecsFramework",
+                        "org.specs2.runner.Specs2Framework",
+                        "org.specs2.runner.SpecsFramework"
+                    ]
+                },
+                {
+                    "names": [
+                        "utest.runner.Framework"
+                    ]
+                },
+                {
+                    "names": [
+                        "munit.Framework"
+                    ]
+                },
+                {
+                    "names": [
+                        "mill.testng.TestNGFramework"
+                    ]
+                }
+            ],
+            "options": {
+                "excludes": [
+                    
+                ],
+                "arguments": [
+                    {
+                        "args": [
+                            "-v",
+                            "-a"
+                        ],
+                        "framework": {
+                            "names": [
+                                "com.novocode.junit.JUnitFramework"
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "platform": {
+            "name": "jvm",
+            "config": {
+                "home": "/Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home",
+                "options": [
+                    
+                ]
+            },
+            "mainClass": [
+                
+            ]
+        },
+        "resolution": {
+            "modules": [
+                {
+                    "organization": "junit",
+                    "name": "junit",
+                    "version": "3.8.1",
+                    "artifacts": [
+                        {
+                            "name": "junit",
+                            "path": "/Users/vanessawartemberg/.m2/repository/junit/junit/3.8.1/junit-3.8.1.jar"
+                        },
+                        {
+                            "name": "junit",
+                            "classifier": "sources",
+                            "path": "/Users/vanessawartemberg/.m2/repository/junit/junit/3.8.1/junit-3.8.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.slf4j",
+                    "name": "slf4j-api",
+                    "version": "1.7.36",
+                    "artifacts": [
+                        {
+                            "name": "slf4j-api",
+                            "path": "/Users/vanessawartemberg/.m2/repository/org/slf4j/slf4j-api/1.7.36/slf4j-api-1.7.36.jar"
+                        },
+                        {
+                            "name": "slf4j-api",
+                            "classifier": "sources",
+                            "path": "/Users/vanessawartemberg/.m2/repository/org/slf4j/slf4j-api/1.7.36/slf4j-api-1.7.36-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.xerial",
+                    "name": "sqlite-jdbc",
+                    "version": "3.45.1.0",
+                    "artifacts": [
+                        {
+                            "name": "sqlite-jdbc",
+                            "path": "/Users/vanessawartemberg/.m2/repository/org/xerial/sqlite-jdbc/3.45.1.0/sqlite-jdbc-3.45.1.0.jar"
+                        },
+                        {
+                            "name": "sqlite-jdbc",
+                            "classifier": "sources",
+                            "path": "/Users/vanessawartemberg/.m2/repository/org/xerial/sqlite-jdbc/3.45.1.0/sqlite-jdbc-3.45.1.0-sources.jar"
+                        }
+                    ]
+                }
+            ]
+        },
+        "tags": [
+            "test"
+        ]
+    }
+}

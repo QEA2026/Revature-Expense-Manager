@@ -1,5 +1,6 @@
+
 import sqlite3
-import hashlib 
+import bcrypt
 
 conn = sqlite3.connect("database/expense_manager.db")
 
@@ -24,6 +25,7 @@ cursor.execute("""
                    amount REAL NOT NULL,
                    description TEXT NOT NULL,
                    date TEXT NOT NULL,
+                   category TEXT,
                    
                    FOREIGN KEY (user_id) REFERENCES users(id) 
                    )
@@ -44,11 +46,52 @@ cursor.execute("""
             """)
 
 
-hashed = hashlib.sha256("password123".encode()).hexdigest()
-cursor.execute("INSERT OR IGNORE INTO users (username, password, role) values (?,?,?)", ('john', hashed, "employee"))
-cursor.execute ("INSERT OR IGNORE INTO users (username, password, role) values (?,?,?)", ('manager1', hashed, 'manager'))
+# Hash passwords with bcrypt
+marco_password = bcrypt.hashpw("password123".encode(), bcrypt.gensalt()).decode()
+bob_password = bcrypt.hashpw("password123".encode(), bcrypt.gensalt()).decode()
+vanessa_password = bcrypt.hashpw("password123".encode(), bcrypt.gensalt()).decode()
 
-cursor.execute("INSERT OR IGNORE INTO expenses (user_id, amount, description, date) values (?,?,?,?)", (1,50,'withdrawl',"2026-08-04"))
-cursor.execute("INSERT OR IGNORE INTO approvals (expense_id, status, reviewer, comment, review_date) values (?,?,?,?,?)", (1,'pending', None, None, None))
+cursor.execute("""
+    INSERT OR IGNORE INTO users (username, password, role) VALUES (?, ?, ?), (?, ?, ?), (?, ?, ?)
+""", ('marco', marco_password, 'employee',
+      'bob', bob_password, 'employee',
+      'vanessa', vanessa_password, 'manager'))
+
+## TEST DATA
+cursor.execute("""
+               INSERT INTO expenses (user_id, amount, category, description, date) VALUES
+                ((SELECT id FROM users WHERE username = 'marco'), 135.42, 'travel', 'Airport rideshare to client site', '2026-06-01'),
+                ((SELECT id FROM users WHERE username = 'marco'), 82.19, 'meals', 'Team lunch during sprint planning', '2026-06-03'),
+                ((SELECT id FROM users WHERE username = 'bob'), 46.77, 'office', 'Replacement keyboard for workstation', '2026-06-02'),
+                ((SELECT id FROM users WHERE username = 'bob'), 312.50, 'lodging', 'Hotel for training travel', '2026-06-04')
+""")
+
+cursor.execute("""
+               INSERT INTO approvals (expense_id, status, reviewer, comment, review_date) VALUES
+               (
+                   (SELECT id FROM expenses WHERE description = 'Airport rideshare to client site'),
+                   'approved',
+                   (SELECT id FROM users WHERE username = 'vanessa'),
+                   'Approved for client travel reimbursement.',
+                   '2026-06-02'
+               ),
+               (
+                   (SELECT id FROM expenses WHERE description = 'Team lunch during sprint planning'),
+                   'pending', NULL, NULL, NULL
+               ),
+               (
+                   (SELECT id FROM expenses WHERE description = 'Replacement keyboard for workstation'),
+                   'denied',
+                   (SELECT id FROM users WHERE username = 'vanessa'),
+                   'Please attach the original approval request before resubmitting.',
+                   '2026-06-03'
+               ),
+               (
+                   (SELECT id FROM expenses WHERE description = 'Hotel for training travel'),
+                   'pending', NULL, NULL, NULL
+               )
+""")
+
 conn.commit()
 conn.close()
+print("Database setup complete!")
