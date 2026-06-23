@@ -109,6 +109,12 @@ Server starts on `http://localhost:8080`.
 curl -X POST http://localhost:8080/login \
   -H "Content-Type: application/json" \
   -d '{"username": "vanessa", "password": "password123"}'
+
+curl http://localhost:8080/expenses/pending
+curl http://localhost:8080/reports/employee/1
+curl http://localhost:8080/reports/category/travel
+curl http://localhost:8080/reports/date/2026-06-01
+curl http://localhost:8080/reports/expense/1
 ```
 
 ## Employee App Features (Python Console)
