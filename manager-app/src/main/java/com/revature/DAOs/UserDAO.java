@@ -2,8 +2,9 @@ package com.revature.DAOs;
 import com.revature.models.User;
 import com.revature.utils.ConnectionUtil;
 import java.sql.*;
+import com.revature.exceptions.ResourceNotFoundException;
 
-// The DAO just talks to the database so no validation
+
 public class UserDAO implements UserDAOInterface{
 
     @Override
@@ -30,6 +31,33 @@ public class UserDAO implements UserDAOInterface{
         } catch (SQLException e){
             e.printStackTrace();
         }
-        return null;
+        throw new ResourceNotFoundException("User not found with username: " + username);
+    }
+
+
+    public User getUserById(int userId){
+        String sql = "select * from users where id = ?;";
+
+        try(Connection conn = ConnectionUtil.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)){
+
+            ps.setInt(1, userId);
+
+            try(ResultSet rs = ps.executeQuery()){
+                if(rs.next()){
+                    User u = new User(
+                            rs.getInt("id"),
+                            rs.getString("username"),
+                            rs.getString("password"),
+                            rs.getString("role")
+                    );
+                    return u;
+                }
+            }
+
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        throw new ResourceNotFoundException("User not found with id: " + userId);
     }
 }

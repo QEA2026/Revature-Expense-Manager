@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import com.revature.models.Expense;
 import com.revature.utils.ConnectionUtil;
+import com.revature.exceptions.ResourceNotFoundException;
 
 
 public class ExpenseDAO implements ExpenseDAOInterface{
@@ -134,6 +135,7 @@ public class ExpenseDAO implements ExpenseDAOInterface{
         return null;
     }
 
+    // Should return only one specific expense by its unique primary key
     @Override
     public Expense getExpenseById(int expenseId){
         String sql = "Select * from expenses where id = ?;";
@@ -161,6 +163,6 @@ public class ExpenseDAO implements ExpenseDAOInterface{
         } catch (SQLException a){
             a.printStackTrace();
         }
-        return null;
+        throw new ResourceNotFoundException("Expense not found with id: " + expenseId);
     }
 }

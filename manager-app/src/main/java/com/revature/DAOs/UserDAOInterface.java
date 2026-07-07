@@ -11,4 +11,7 @@ public interface UserDAOInterface {
     and manage employee expense reports.
      */
     User getUserByUsername(String username);
+
+    // to verify a user exists by their id
+    User getUserById(int userId);
 }
