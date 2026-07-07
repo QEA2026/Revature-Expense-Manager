@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import com.revature.models.Expense;
 
-//here we will lay out functionalities that UserDAO will implement
+//here we will lay out functionalities that ExpenseDAO will implement
 public interface ExpenseDAOInterface {
 
     // view all pending expenses ( joins with approvals to filter by status)
