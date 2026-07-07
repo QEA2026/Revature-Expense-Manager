@@ -63,6 +63,7 @@ Revature-Expense-Manager/
 │       ├── DAOs/
 │       ├── models/
 │       └── utils/
+│       └── exceptions/
 └── setup_db.py                 (creates schema + seeds test data)
 ```
 
@@ -88,6 +89,7 @@ python3 main.py
 ```bash
 cd manager-app
 mvn clean install
+mvn exec:java -Dexec.mainClass="com.revature.Main" // starts main from terminal
 ```
 Run `Main.java` from your IDE
 
@@ -110,10 +112,12 @@ curl -X POST http://localhost:8080/login \
   -H "Content-Type: application/json" \
   -d '{"username": "vanessa", "password": "password123"}'
 
+curl http://localhost:8080/login
 curl http://localhost:8080/expenses/pending
 curl http://localhost:8080/reports/employee/1
 curl http://localhost:8080/reports/category/travel
 curl http://localhost:8080/reports/date/2026-06-01
+curl http://localhost:8080/reports/employee/999 // invalid user
 curl http://localhost:8080/reports/expense/1
 ```
 
