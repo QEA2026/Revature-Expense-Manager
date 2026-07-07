@@ -114,7 +114,6 @@ curl -X POST http://localhost:8080/login \
 
 curl http://localhost:8080/login
 curl http://localhost:8080/expenses/pending
-curl http://localhost:8080/expenses/approved
 curl http://localhost:8080/reports/employee/1
 curl http://localhost:8080/reports/category/travel
 curl http://localhost:8080/reports/date/2026-06-01
