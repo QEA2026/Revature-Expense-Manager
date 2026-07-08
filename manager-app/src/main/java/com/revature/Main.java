@@ -10,6 +10,7 @@ public class Main {
         ExpenseController expenseController = new ExpenseController();
 
         Javalin app = Javalin.create(config -> {
+            // Keep manager-side route setup together so the API entry points stay easy to find.
             config.routes.post("/login", authController.loginHandler);
             config.routes.get("/expenses/pending", expenseController.getPendingExpensesHandler);
             config.routes.get("/reports/employee/{userId}", expenseController.getExpensesByEmployeeHandler);
