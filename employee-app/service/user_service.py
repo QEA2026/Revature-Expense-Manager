@@ -18,6 +18,10 @@ def login(username, password):
         if user is None:
             logger.warning(f"User with username {username} does not exist")
             return None
+
+        if user[3] == "manager":
+            logger.warning(f"Cannot login to employee side with manager credentials")
+            return None
         
         if bcrypt.checkpw(password.encode(), user[2].encode()):
             logger.info(f"Successful login for user: {username}")

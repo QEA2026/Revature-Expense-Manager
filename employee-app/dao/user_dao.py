@@ -9,6 +9,7 @@ from logger import get_logger
 
 logger = get_logger(__name__)
 
+# returns (1, "vanessa", "hashedpassword", "manager")
 def find_user_by_username(username):
     conn = get_connection()
     try:
