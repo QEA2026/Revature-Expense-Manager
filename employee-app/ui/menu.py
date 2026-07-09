@@ -69,7 +69,7 @@ def submit_expense_menu(user):
     
         
 def view_expenses_menu(user):
-    expenses = get_expenses_dao(user[0])
+    expenses = get_my_expenses(user[0], 'pending')
     
     if not expenses:
         print("No expenses found")
@@ -82,7 +82,7 @@ def view_expenses_menu(user):
     
 def edit_expense_menu(user):
     # show their pending expenses first so they know what to pick
-    expenses = get_my_expenses(user[0])
+    expenses = get_my_expenses(user[0], 'pending')
     
     if not expenses:
         print("No expenses found")
