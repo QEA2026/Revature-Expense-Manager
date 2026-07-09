@@ -31,7 +31,7 @@ def employee_menu(user):
     while True:
         print("\n--- Employee Menu ---")
         print("1. Submit new expense")
-        print("2. View my expenses")
+        print("2. View pending expenses")
         print("3. Edit expense")
         print("4. Delete expense")
         print("5. View history")
@@ -69,26 +69,26 @@ def submit_expense_menu(user):
     
         
 def view_expenses_menu(user):
-    expenses = get_expenses_dao(user[0])
+    expenses = get_my_expenses(user[0], 'pending')
     
     if not expenses:
-        print("No expenses found")
+        print("No pending expenses found")
         return
     
-    print("\n--------------------------- My Expenses ------------------------")
+    print("\n------------------------ Pending Expenses ----------------------")
     for expense in expenses:
         print(f"ID: {expense[0]} | Amount: ${expense[1]} | Description: {expense[2]} | Date: {expense[3]} | Status: {expense[4]} | Category: {expense[5]}")
         
     
 def edit_expense_menu(user):
     # show their pending expenses first so they know what to pick
-    expenses = get_my_expenses(user[0])
+    expenses = get_my_expenses(user[0], 'pending')
     
     if not expenses:
-        print("No expenses found")
+        print("No pending expenses found")
         return
     
-    print("\n--------------------------- My Expenses ------------------------")
+    print("\n------------------------ Pending Expenses ----------------------")
     for expense in expenses:
         print(f"ID: {expense[0]} | Amount: ${expense[1]} | Description: {expense[2]} | Date: {expense[3]} | Status: {expense[4]} | Category: {expense[5]}")
     
@@ -112,10 +112,10 @@ def delete_expense_menu(user):
     expenses = get_my_expenses(user[0], 'pending')
     
     if not expenses:
-        print("No expenses found")
+        print("No pending expenses found")
         return
     
-    print("\n--------------------------- My Expenses ------------------------")
+    print("\n------------------------ Pending Expenses ----------------------")
     for expense in expenses:
         print(f"ID: {expense[0]} | Amount: ${expense[1]} | Description: {expense[2]} | Date: {expense[3]} | Status: {expense[4]} | Category: {expense[5]}")
     
@@ -138,9 +138,9 @@ def view_history_menu(user):
     expenses = get_expense_history(user[0])
     
     if not expenses:
-        print("No expenses found")
+        print("No expense history found")
         return
     
-    print("\n--------------------------- My Expenses ------------------------")
+    print("\n------------------------ Expense History -----------------------")
     for expense in expenses:
         print(f"ID: {expense[0]} | Amount: ${expense[1]} | Description: {expense[2]} | Date: {expense[3]} | Status: {expense[4]} | Category: {expense[5]}")

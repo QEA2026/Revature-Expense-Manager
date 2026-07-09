@@ -37,11 +37,12 @@ cursor.execute("""
                    id INTEGER PRIMARY KEY AUTOINCREMENT, 
                    expense_id INTEGER NOT NULL,
                    status TEXT NOT NULL,
-                   reviewer TEXT,
+                   reviewer INTEGER,
                    comment TEXT,
                    review_date TEXT,
                    
-                   FOREIGN KEY (expense_id) REFERENCES expenses(id)
+                   FOREIGN KEY (expense_id) REFERENCES expenses(id),
+                   FOREIGN KEY (reviewer) REFERENCES users(id)
                    )
             """)
 

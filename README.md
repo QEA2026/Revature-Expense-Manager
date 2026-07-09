@@ -40,7 +40,7 @@ The Java side additionally exposes its Controller layer as a Javalin REST API ra
 
 **`users`** — id, username, password (bcrypt hash), role (`employee` or `manager`)
 **`expenses`** — id, user_id (FK), amount, category, description, date
-**`approvals`** — id, expense_id (FK), status (`pending`/`approved`/`denied`), reviewer, comment, review_date
+**`approvals`** — id, expense_id (FK), status (`pending`/`approved`/`denied`), reviewer (manager user id), comment, review_date
 
 Every new expense creates a row in `expenses` and a matching `pending` row in `approvals`. Status, reviewer, and comments live separately from the expense itself so that submission data never changes once created.
 
@@ -51,7 +51,7 @@ Revature-Expense-Manager/
 ├── database/
 │   └── expense_manager.db
 ├── employee-app/              (Python)
-│   ├── main.py
+│   ├── Main.py
 │   ├── dao/
 │   ├── service/
 │   ├── ui/
@@ -70,30 +70,42 @@ Revature-Expense-Manager/
 ## Setup
 
 ### Database
-From the repo root:
-```bash
-python3 setup_db.py
-```
-Creates `database/expense_manager.db` with all tables and seed data (test employees, a manager, and sample expenses).
-
-### Employee App (Python)
+From the repo root, create the Python virtual environment and install the employee-side dependencies first:
 ```bash
 cd employee-app
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-python3 main.py
+cd ..
+```
+
+Then rebuild the shared database:
+```bash
+rm -f database/expense_manager.db
+employee-app/venv/bin/python setup_db.py
+```
+
+This creates a fresh `database/expense_manager.db` with all tables and seed data (test employees, a manager, and sample expenses).
+
+### Employee App (Python)
+```bash
+cd employee-app
+source venv/bin/activate
+python Main.py
 ```
 
 ### Manager App (Java)
 ```bash
 cd manager-app
-mvn clean install
-mvn exec:java -Dexec.mainClass="com.revature.Main" // starts main from terminal
+mvn clean compile
+CLASSPATH="target/classes:$(find ~/.m2/repository -name '*.jar' | paste -sd: -)" java com.revature.Main
 ```
-Run `Main.java` from your IDE
 
-Server starts on `http://localhost:8080`.
+When the app starts:
+- Enter `1` to open the terminal manager menu
+- Enter `2` to start the REST API for Postman
+
+If you choose `2`, the server starts on `http://localhost:8080`.
 
 ## API Endpoints (Manager App)
 
@@ -112,13 +124,12 @@ curl -X POST http://localhost:8080/login \
   -H "Content-Type: application/json" \
   -d '{"username": "vanessa", "password": "password123"}'
 
-curl http://localhost:8080/login
 curl http://localhost:8080/expenses/pending
 curl http://localhost:8080/reports/employee/1
 curl http://localhost:8080/reports/category/travel
 curl http://localhost:8080/reports/date/2026-06-01
-curl http://localhost:8080/reports/employee/999 // invalid user
 curl http://localhost:8080/reports/expense/1
+curl http://localhost:8080/reports/employee/999
 ```
 
 ## Employee App Features (Python Console)
@@ -134,5 +145,3 @@ curl http://localhost:8080/reports/expense/1
 
 - Passwords are hashed with bcrypt on both sides; Java uses `at.favre.lib.bcrypt` specifically because the older `jbcrypt` library doesn't support the `$2b$` hash format Python's `bcrypt` produces.
 - The Java Manager App is built as a REST API (not a console app) so it can be demoed live via Postman, with database changes verified in real time through DBeaver.
-
-

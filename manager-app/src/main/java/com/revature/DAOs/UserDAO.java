@@ -2,10 +2,13 @@ package com.revature.DAOs;
 import com.revature.models.User;
 import com.revature.utils.ConnectionUtil;
 import java.sql.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.revature.exceptions.ResourceNotFoundException;
 
 
 public class UserDAO implements UserDAOInterface{
+    private static final Logger logger = LoggerFactory.getLogger(UserDAO.class);
 
     @Override
     public User getUserByUsername(String username) {
