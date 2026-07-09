@@ -6,7 +6,8 @@ Insert, Select, update, and delete expenses
 """
 from db.connection import get_connection
 import datetime
-
+from logger import get_logger
+logger = get_logger(__name__)
 
 def submit_new_expense_dao(user_id, amount, description, category):
     conn = get_connection()
@@ -18,9 +19,13 @@ def submit_new_expense_dao(user_id, amount, description, category):
                     (user_id, amount, description, date, category))
         cur.execute(" INSERT INTO approvals (expense_id, status) values (?,?)",
                     (cur.lastrowid, 'pending'))
+
+        expense_id = cur.lastrowid
         conn.commit()
+        logger.info(f"Successfully added expense {expense_id} for user_id: {user_id}")
+        return True
     except Exception as e:
-        print(f"Error submitting expense: {e}")
+        logger.error(f"Error submitting expense: {e}")
         return None
     finally:
         conn.close()
@@ -45,7 +50,7 @@ def get_expenses_dao(user_id):
         result = cur.fetchall()
         return result
     except Exception as e:
-        print(f"Error retrieving expenses: {e}")
+        logger.error(f"Error retrieving expenses: {e}")
         return None
     finally:
         conn.close()
@@ -70,7 +75,7 @@ def get_expense_by_status(user_id, status):
         result = cur.fetchall()
         return result
     except Exception as e:
-        print(f"Error retrieving {status} expenses: {e}")
+        logger.error(f"Error retrieving {status} expenses: {e}")
         return None
     finally:
         conn.close()
@@ -95,7 +100,7 @@ def get_expense_history_dao(user_id):
         result = cur.fetchall()
         return result
     except Exception as e:
-        print(f"Error retrieving expenses: {e}")
+        logger.error(f"Error retrieving expenses: {e}")
         return None
     finally:
         conn.close()
@@ -121,10 +126,10 @@ def edit_expense_dao(expense_id, user_id, new_amount, new_description):
         
         # If no expense found or not pending, return false
         if result is None:
-            print("Expense not found")
+            logger.warning(f"Expense {expense_id} not found")
             return False
         if result[0] != 'pending':
-            print("Can only edit pending expenses")
+            logger.warning(f"Expense {expense_id} for user {user_id} is not pending - cannot edit")
             return False
         
         
@@ -137,10 +142,11 @@ def edit_expense_dao(expense_id, user_id, new_amount, new_description):
         """, (new_amount, new_description, expense_id, user_id))
         
         conn.commit()
+        logger.info(f"Updated expense {expense_id}")
         return True
     
     except Exception as e:
-        print(f"Error editing expense: {e}")
+        logger.error(f"Error editing expense: {e}")
         return None
     finally:
         conn.close()
@@ -163,10 +169,10 @@ def delete_expense_dao(user_id, expense_id):
         
         # If no expense found or not pending, return false
         if result is None:
-            print("Expense not found")
+            logger.warning(f"Expense {expense_id} not found")
             return False
         if result[0] != 'pending':
-            print("Can only delete pending expenses")
+            logger.warning(f"Expense {expense_id} for user {user_id} is not pending - cannot delete")
             return False
         
         # Delete the approval record first (dependent table)
@@ -176,9 +182,10 @@ def delete_expense_dao(user_id, expense_id):
         cur.execute("DELETE FROM expenses WHERE user_id = ? AND id = ?", (user_id, expense_id))
         
         conn.commit()
+        logger.info(f"Deleted expense {expense_id}")
         return True
     except Exception as e:
-        print(f"Error deleting expense: {e}")
+        logger.error(f"Error deleting expense: {e}")
         return None
     finally: 
         conn.close()
