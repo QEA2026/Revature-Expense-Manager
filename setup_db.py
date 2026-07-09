@@ -37,7 +37,7 @@ cursor.execute("""
                    id INTEGER PRIMARY KEY AUTOINCREMENT, 
                    expense_id INTEGER NOT NULL,
                    status TEXT NOT NULL,
-                   reviewer TEXT,
+                   reviewer INTEGER,
                    comment TEXT,
                    review_date TEXT,
                    
