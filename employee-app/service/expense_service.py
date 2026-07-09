@@ -48,6 +48,7 @@ def edit_expense(expense_id, user_id, new_amount, new_description):
             logger.warning(f"Empty description submitted by user {user_id}: {description}")
             return False
 
+
         edit_expense_dao(expense_id, user_id, new_amount, new_description)
         logger.info(f"Expense {expense_id} successfully edited by user {user_id}")
         return True

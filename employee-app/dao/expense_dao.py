@@ -79,7 +79,8 @@ def get_expense_by_status(user_id, status):
         return None
     finally:
         conn.close()
-        
+
+# get all expenses (that have been approved or denied)
 def get_expense_history_dao(user_id):
     conn = get_connection()
     try:
