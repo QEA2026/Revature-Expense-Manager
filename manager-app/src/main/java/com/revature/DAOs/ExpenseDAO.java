@@ -4,13 +4,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.revature.models.Expense;
 import com.revature.utils.ConnectionUtil;
 import com.revature.exceptions.ResourceNotFoundException;
 
 
 public class ExpenseDAO implements ExpenseDAOInterface{
+    private static final Logger logger = LoggerFactory.getLogger(ExpenseDAO.class);
 
     @Override
     public ArrayList<Expense> getPendingExpenses() {

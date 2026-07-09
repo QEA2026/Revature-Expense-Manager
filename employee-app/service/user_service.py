@@ -6,20 +6,26 @@ Output should be: (1, "vanessa", "hashedpassword123", "employee")
 
 """
 from dao.user_dao import find_user_by_username
+from logger import get_logger
 import bcrypt
+
+logger = get_logger(__name__)
 
 def login(username, password):
     try:
         user = find_user_by_username(username)
         
-        if user is None: # for "None" always use "is" 
+        if user is None:
+            logger.warning(f"User with username {username} does not exist")
             return None
         
         if bcrypt.checkpw(password.encode(), user[2].encode()):
+            logger.info(f"Successful login for user: {username}")
             return user
         else:
+            logger.warning(f"Failed login attempt - incorrect password for user: {username}")
             return None
         
     except Exception as e:
-        print(f"Error logging the user in: {e}")
+        logger.error(f"Error during login for {username}: {e}")
         return None

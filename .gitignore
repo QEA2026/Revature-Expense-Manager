@@ -219,3 +219,5 @@ __marimo__/
 
 # database
 database/expense_manager.db
+
+*.log
