@@ -92,6 +92,83 @@ cursor.execute("""
                )
 """)
 
+## ADDITIONAL TEST DATA
+cursor.execute("""
+               INSERT INTO expenses (user_id, amount, category, description, date) VALUES
+                ((SELECT id FROM users WHERE username = 'marco'), 19.99, 'office', 'USB-C cable for docking station', '2026-06-05'),
+                ((SELECT id FROM users WHERE username = 'marco'), 240.00, 'travel', 'Round-trip train ticket to regional office', '2026-06-07'),
+                ((SELECT id FROM users WHERE username = 'marco'), 58.30, 'meals', 'Client dinner after demo', '2026-06-10'),
+                ((SELECT id FROM users WHERE username = 'marco'), 1200.00, 'lodging', 'Conference hotel stay (3 nights)', '2026-06-12'),
+                ((SELECT id FROM users WHERE username = 'bob'), 75.00, 'travel', 'Parking at downtown client garage', '2026-06-06'),
+                ((SELECT id FROM users WHERE username = 'bob'), 14.25, 'meals', 'Coffee run for onboarding session', '2026-06-08'),
+                ((SELECT id FROM users WHERE username = 'bob'), 499.99, 'office', 'Standing desk converter', '2026-06-09'),
+                ((SELECT id FROM users WHERE username = 'bob'), 6500.00, 'travel', 'International flight for vendor summit', '2026-06-11'),
+                ((SELECT id FROM users WHERE username = 'marco'), 33.10, 'meals', 'Working lunch during code review', '2026-06-13'),
+                ((SELECT id FROM users WHERE username = 'bob'), 128.40, 'office', 'Ergonomic chair cushion set', '2026-06-14')
+""")
+
+cursor.execute("""
+               INSERT INTO approvals (expense_id, status, reviewer, comment, review_date) VALUES
+               (
+                   (SELECT id FROM expenses WHERE description = 'USB-C cable for docking station'),
+                   'approved',
+                   (SELECT id FROM users WHERE username = 'vanessa'),
+                   'Minor office supply, approved.',
+                   '2026-06-06'
+               ),
+               (
+                   (SELECT id FROM expenses WHERE description = 'Round-trip train ticket to regional office'),
+                   'approved',
+                   (SELECT id FROM users WHERE username = 'vanessa'),
+                   'Approved for regional office visit.',
+                   '2026-06-08'
+               ),
+               (
+                   (SELECT id FROM expenses WHERE description = 'Client dinner after demo'),
+                   'pending', NULL, NULL, NULL
+               ),
+               (
+                   (SELECT id FROM expenses WHERE description = 'Conference hotel stay (3 nights)'),
+                   'denied',
+                   (SELECT id FROM users WHERE username = 'vanessa'),
+                   'Exceeds lodging cap; please rebook within policy.',
+                   '2026-06-13'
+               ),
+               (
+                   (SELECT id FROM expenses WHERE description = 'Parking at downtown client garage'),
+                   'approved',
+                   (SELECT id FROM users WHERE username = 'vanessa'),
+                   'Approved, client visit confirmed.',
+                   '2026-06-07'
+               ),
+               (
+                   (SELECT id FROM expenses WHERE description = 'Coffee run for onboarding session'),
+                   'pending', NULL, NULL, NULL
+               ),
+               (
+                   (SELECT id FROM expenses WHERE description = 'Standing desk converter'),
+                   'pending', NULL, NULL, NULL
+               ),
+               (
+                   (SELECT id FROM expenses WHERE description = 'International flight for vendor summit'),
+                   'denied',
+                   (SELECT id FROM users WHERE username = 'vanessa'),
+                   'Needs VP sign-off before booking international travel.',
+                   '2026-06-12'
+               ),
+               (
+                   (SELECT id FROM expenses WHERE description = 'Working lunch during code review'),
+                   'approved',
+                   (SELECT id FROM users WHERE username = 'vanessa'),
+                   'Approved.',
+                   '2026-06-14'
+               ),
+               (
+                   (SELECT id FROM expenses WHERE description = 'Ergonomic chair cushion set'),
+                   'pending', NULL, NULL, NULL
+               )
+""")
+
 conn.commit()
 conn.close()
 print("Database setup complete!")
