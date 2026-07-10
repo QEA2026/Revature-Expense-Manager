@@ -2,11 +2,11 @@ package com.revature.controllers;
 import com.revature.DAOs.ExpenseDAO;
 import io.javalin.http.Handler;
 import io.javalin.http.HttpStatus;
-
 import com.revature.DAOs.UserDAO;
 import com.revature.models.User;
 import com.revature.exceptions.ResourceNotFoundException;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /*
  * Handles all HTTP requests related to viewing expenses for the
  * Manager App. This is the "web" layer that sits between Postman
@@ -20,7 +20,7 @@ import com.revature.exceptions.ResourceNotFoundException;
  */
 
 public class ExpenseController {
-
+    private static final Logger logger = LoggerFactory.getLogger(ExpenseController.class);
     ExpenseDAO expenseDAO = new ExpenseDAO();
     UserDAO userDAO = new UserDAO();
 
@@ -31,15 +31,17 @@ public class ExpenseController {
             ctx.json(pendingExpenses);
             ctx.status(HttpStatus.OK);
         } catch (Exception e) {
+            logger.error("Unexpected error retrieving expenses: {}", e.getMessage());
             ctx.status(HttpStatus.INTERNAL_SERVER_ERROR);
             ctx.result("An unexpected error occurred.");
         }
     };
 
-    // {userId} comes from the URL itself, e.g. /reports/employee/3
+    // {userId} comes from the URL itself, /reports/employee/3
     public Handler getExpensesByEmployeeHandler = (ctx) -> {
+        int userId = 0;
         try {
-            int userId = Integer.parseInt(ctx.pathParam("userId"));
+            userId = Integer.parseInt(ctx.pathParam("userId"));
 
             // Check if the user exists first
             User user = userDAO.getUserById(userId);
@@ -52,9 +54,11 @@ public class ExpenseController {
             ctx.status(HttpStatus.OK);
 
         } catch (ResourceNotFoundException e) {
+            logger.warn("User {} not found during retrieval of expenses: {}", userId, e.getMessage());
             ctx.status(HttpStatus.NOT_FOUND);
             ctx.result(e.getMessage());
         } catch (Exception e) {
+            logger.error("Unexpected error retrieving expenses for employee {} : {}", userId, e.getMessage());
             ctx.status(HttpStatus.INTERNAL_SERVER_ERROR);
             ctx.result("An unexpected error occurred.");
         }
@@ -62,22 +66,26 @@ public class ExpenseController {
 
     // e.g. /reports/category/travel
     public Handler getExpensesByCategoryHandler = (ctx) -> {
+        String category = "";
         try {
-            String category = ctx.pathParam("category");
+            category = ctx.pathParam("category");
             ctx.json(expenseDAO.getExpensesByCategory(category));
             ctx.status(HttpStatus.OK);
         } catch (Exception e) {
+            logger.error("Unexpected error occurred during retrieval of expense by category {} : {}", category, e.getMessage());
             ctx.status(HttpStatus.INTERNAL_SERVER_ERROR);
             ctx.result("An unexpected error occurred.");
         }
     };
 
     public Handler getExpenseByDateHandler = (ctx) -> {
+        String date = "";
         try {
-            String date = ctx.pathParam("date");
+            date = ctx.pathParam("date");
             ctx.json(expenseDAO.getExpenseByDate(date));
             ctx.status(HttpStatus.OK);
         } catch (Exception e) {
+            logger.error("Unexpected error occurred during retrieval of expense by date {} : {}", date, e.getMessage());
             ctx.status(HttpStatus.INTERNAL_SERVER_ERROR);
             ctx.result("An unexpected error occurred.");
         }
@@ -85,8 +93,9 @@ public class ExpenseController {
 
     // we need this before approving or denying it.
     public Handler getExpenseByIdHandler = (ctx) -> {
+        int id = 0;
         try {
-            int id = Integer.parseInt(ctx.pathParam("expenseId"));
+            id = Integer.parseInt(ctx.pathParam("expenseId"));
 
             var expense = expenseDAO.getExpenseById(id);
             if (expense == null) {
@@ -96,9 +105,11 @@ public class ExpenseController {
             ctx.json(expense);
             ctx.status(HttpStatus.OK);
         } catch (ResourceNotFoundException e) {
+            logger.warn("Expense not found with id: {}", id);
             ctx.status(HttpStatus.NOT_FOUND);
             ctx.result(e.getMessage());
         } catch (Exception e) {
+            logger.error("Unexpected error retrieving expense by id {} : {}", id, e.getMessage());
             ctx.status(HttpStatus.INTERNAL_SERVER_ERROR);
             ctx.result("An unexpected error occurred.");
         }

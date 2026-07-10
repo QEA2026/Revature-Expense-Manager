@@ -2,10 +2,13 @@ package com.revature.DAOs;
 import com.revature.models.User;
 import com.revature.utils.ConnectionUtil;
 import java.sql.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.revature.exceptions.ResourceNotFoundException;
 
 
 public class UserDAO implements UserDAOInterface{
+    private static final Logger logger = LoggerFactory.getLogger(UserDAO.class);
 
     @Override
     public User getUserByUsername(String username) {
@@ -24,13 +27,15 @@ public class UserDAO implements UserDAOInterface{
                             rs.getString("password"),
                             rs.getString("role")
                     );
+                    logger.info("Successfully retrieved user with username: {}", username);
                     return u;
                 }
             }
 
         } catch (SQLException e){
-            e.printStackTrace();
+            logger.error("Database error retrieving user by username {} : {}", username, e.getMessage());
         }
+        logger.warn("No user found with username: {}", username);
         throw new ResourceNotFoundException("User not found with username: " + username);
     }
 
@@ -51,13 +56,15 @@ public class UserDAO implements UserDAOInterface{
                             rs.getString("password"),
                             rs.getString("role")
                     );
+                    logger.info("Successfully retrieved user with id: {}", userId);
                     return u;
                 }
             }
 
         } catch (SQLException e){
-            e.printStackTrace();
+            logger.error("Database error retrieving user by id {} : {}", userId, e.getMessage());
         }
+        logger.warn("No user found with id: {}", userId);
         throw new ResourceNotFoundException("User not found with id: " + userId);
     }
 }

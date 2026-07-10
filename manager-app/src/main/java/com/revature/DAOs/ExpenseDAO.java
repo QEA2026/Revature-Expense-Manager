@@ -4,13 +4,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.revature.models.Expense;
 import com.revature.utils.ConnectionUtil;
 import com.revature.exceptions.ResourceNotFoundException;
 
 
 public class ExpenseDAO implements ExpenseDAOInterface{
+    private static final Logger logger = LoggerFactory.getLogger(ExpenseDAO.class);
 
     @Override
     public ArrayList<Expense> getPendingExpenses() {
@@ -34,10 +36,11 @@ public class ExpenseDAO implements ExpenseDAOInterface{
                     );
                     expenseList.add(e);
                 }
+                logger.info("Successfully retrieved {} pending expense(s)", expenseList.size());
                 return expenseList;
             }
         } catch (SQLException e){
-            e.printStackTrace();
+            logger.error("Database error retrieving pending expenses: {}", e.getMessage());
         }
         return null;
     }
@@ -62,10 +65,11 @@ public class ExpenseDAO implements ExpenseDAOInterface{
                     );
                     expenseList.add(e);
                 }
+                logger.info("Successfully retrieved {} expense(s) for employee id: {}", expenseList.size(), userId);
                 return expenseList;
             }
         } catch (SQLException e){
-            e.printStackTrace();
+            logger.error("Database error retrieving expenses for employee id {} : {}", userId, e.getMessage());
         }
         return null;
     }
@@ -93,11 +97,12 @@ public class ExpenseDAO implements ExpenseDAOInterface{
                     );
                     expenseList.add(e);
                 }
+                logger.info("Successfully retrieved {} expense(s) for category: {}", expenseList.size(), category);
                 return expenseList;
             }
 
         } catch (SQLException e){
-            e.printStackTrace();
+            logger.error("Database error retrieving expenses for category {} : {}", category, e.getMessage());
         }
         return null;
 
@@ -126,11 +131,12 @@ public class ExpenseDAO implements ExpenseDAOInterface{
                     );
                     expenseList.add(e);
                 }
+                logger.info("Successfully retrieved {} expense(s) for date: {}", expenseList.size(), date);
                 return expenseList;
             }
 
         } catch (SQLException e){
-            e.printStackTrace();
+            logger.error("Database error retrieving expenses for date {} : {}", date, e.getMessage());
         }
         return null;
     }
@@ -155,14 +161,16 @@ public class ExpenseDAO implements ExpenseDAOInterface{
                             rs.getString("date"),
                             rs.getString("category")
                     );
+                    logger.info("Successfully retrieved expense with id: {}", expenseId);
                     return e;
                 }
 
             }
 
         } catch (SQLException a){
-            a.printStackTrace();
+            logger.error("Database error retrieving expense by id {} : {}", expenseId, a.getMessage());
         }
+        logger.warn("No expense found with id: {}", expenseId);
         throw new ResourceNotFoundException("Expense not found with id: " + expenseId);
     }
 }
