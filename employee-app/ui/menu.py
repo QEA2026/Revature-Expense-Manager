@@ -8,13 +8,14 @@ UI Layer: input/output only, no logic
 """
 from service.user_service import login
 from service.expense_service import submit_new_expense, get_expenses_dao, edit_expense, delete_expense, get_my_expenses, get_expense_history
-
+from tabulate import tabulate # for the table
+from getpass import getpass # for the password encryption (user)
 
 def login_menu():
     attempts = 0
     while attempts < 3:
         username = input("Username: ")
-        password = input("Password: ")
+        password = getpass("Password: ")
         login_attempt = login(username, password)
         
         if login_attempt is not None:
@@ -54,30 +55,53 @@ def employee_menu(user):
             break
         else:
             print("Invalid choice, please try again")
-    
+
 
 def submit_expense_menu(user):
-    amount = str(input("Enter Amount: "))
-    description = input("Enter Description: ")
+    # Reprompt the user until they put in a valid amount and description
+    while True:
+        amount = input("Enter Amount: ")
+        try:
+            if float(amount) <= 0:
+                print("Amount must be greater than 0. Please try again.")
+                continue
+            break
+        except ValueError:
+            print("Invalid amount. Please enter a number.")
+            continue
+
+    while True:
+        description = input("Enter Description: ")
+        if not description or not description.strip():
+            print("Description cannot be empty. Please try again.")
+            continue
+        break
+
     category = input("Enter Category (optional): ")
-    try:
-        submit_new_expense(user[0], amount, description, category)
+
+    result = submit_new_expense(user[0], amount, description, category)
+
+    if result is True:
         print("Successfully submitted an expense!")
-    except Exception as e:
-        print(f"Error submitting expense: {e}")
-        return None
-    
+    elif result is False:
+        print("Could not submit expense. Please check your input.")
+    else:
+        print("An error occurred while submitting the expense.")
+
         
 def view_expenses_menu(user):
     expenses = get_my_expenses(user[0], 'pending')
     
     if not expenses:
-        print("No pending expenses found")
+        print("No expenses found")
         return
-    
-    print("\n------------------------ Pending Expenses ----------------------")
-    for expense in expenses:
-        print(f"ID: {expense[0]} | Amount: ${expense[1]} | Description: {expense[2]} | Date: {expense[3]} | Status: {expense[4]} | Category: {expense[5]}")
+
+    title = "My Expenses"
+    print("\n--------------------------- My Expenses -------------------------------")
+    # each tuple's values map to the headers by position.
+    headers = ["ID", "Amount", "Description", "Date", "Status", "Category"]
+    print(tabulate(expenses, headers=headers, tablefmt="rounded_outline"))
+
         
     
 def edit_expense_menu(user):
@@ -85,17 +109,48 @@ def edit_expense_menu(user):
     expenses = get_my_expenses(user[0], 'pending')
     
     if not expenses:
-        print("No pending expenses found")
+        print("No expenses found")
         return
-    
-    print("\n------------------------ Pending Expenses ----------------------")
-    for expense in expenses:
-        print(f"ID: {expense[0]} | Amount: ${expense[1]} | Description: {expense[2]} | Date: {expense[3]} | Status: {expense[4]} | Category: {expense[5]}")
-    
-    expense_id = input("Enter the expense ID to edit: ")
-    new_amount = input("Enter new amount: ")
-    new_description = input("Enter new description: ")
-    
+
+    print("\n--------------------------- My Expenses -------------------------------")
+    headers = ["ID", "Amount", "Description", "Date", "Status", "Category"]
+    print(tabulate(expenses, headers=headers, tablefmt="rounded_outline"))
+
+    while True:
+        expense_id = input("Enter the expense ID to edit: ")
+
+        # check if its a valid number
+        if not expense_id.isdigit():
+            print("Invalid input. Please enter a numeric ID.")
+            continue
+
+        # then check if its in pending expenses
+        valid_ids = [str(expense[0]) for expense in expenses]
+        if expense_id not in valid_ids:
+            print("Expense not found. Please choose an ID from the list above.")
+            continue
+
+        break
+
+    while True:
+        new_amount = input("Enter new amount: ")
+        try:
+            if float(new_amount) <= 0:
+                print("Amount must be greater than 0. Please try again.")
+                continue
+            break
+        except ValueError:
+            print("Invalid amount. Please enter a number.")
+            continue
+    while True:
+        new_description = input("Enter new description (press Enter to keep current): ")
+        if not new_description.strip():
+            # if they didnt provide anything use the current description
+            current_expense = next(e for e in expenses if str(e[0]) == expense_id)
+            new_description = current_expense[2] # description is index 2
+            break
+        break
+
     result = edit_expense(expense_id, user[0], new_amount, new_description)
     
     if result is True:
@@ -112,12 +167,12 @@ def delete_expense_menu(user):
     expenses = get_my_expenses(user[0], 'pending')
     
     if not expenses:
-        print("No pending expenses found")
+        print("No expenses found")
         return
-    
-    print("\n------------------------ Pending Expenses ----------------------")
-    for expense in expenses:
-        print(f"ID: {expense[0]} | Amount: ${expense[1]} | Description: {expense[2]} | Date: {expense[3]} | Status: {expense[4]} | Category: {expense[5]}")
+
+    print("\n--------------------------- My Expenses -------------------------------")
+    headers = ["ID", "Amount", "Description", "Date", "Status", "Category"]
+    print(tabulate(expenses, headers=headers, tablefmt="rounded_outline"))
     
     expense_id = input("Enter the expense ID to delete: ")
     
@@ -138,9 +193,9 @@ def view_history_menu(user):
     expenses = get_expense_history(user[0])
     
     if not expenses:
-        print("No expense history found")
+        print("No expenses found")
         return
-    
-    print("\n------------------------ Expense History -----------------------")
-    for expense in expenses:
-        print(f"ID: {expense[0]} | Amount: ${expense[1]} | Description: {expense[2]} | Date: {expense[3]} | Status: {expense[4]} | Category: {expense[5]}")
+
+    print("\n--------------------------- My Expenses -------------------------------")
+    headers = ["ID", "Amount", "Description", "Date", "Status", "Category"]
+    print(tabulate(expenses, headers=headers, tablefmt="rounded_outline"))
