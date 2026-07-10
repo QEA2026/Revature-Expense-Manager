@@ -8,13 +8,14 @@ UI Layer: input/output only, no logic
 """
 from service.user_service import login
 from service.expense_service import submit_new_expense, get_expenses_dao, edit_expense, delete_expense, get_my_expenses, get_expense_history
-from tabulate import tabulate
+from tabulate import tabulate # for the table
+from getpass import getpass # for the password encryption (user)
 
 def login_menu():
     attempts = 0
     while attempts < 3:
         username = input("Username: ")
-        password = input("Password: ")
+        password = getpass("Password: ")
         login_attempt = login(username, password)
         
         if login_attempt is not None:
