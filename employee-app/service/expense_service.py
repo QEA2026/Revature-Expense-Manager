@@ -39,19 +39,22 @@ def get_my_expenses(user_id, status = None):
 
 
 def edit_expense(expense_id, user_id, new_amount, new_description):
-    try: 
+    try:
         if float(new_amount) < 0 :
-            logger.warning(f"Invalid amount submitted by user {user_id}: {amount}")
+            logger.warning(f"Invalid amount submitted by user {user_id}: {new_amount}")
             return False
 
         if not new_description or not new_description.strip():
-            logger.warning(f"Empty description submitted by user {user_id}: {description}")
+            logger.warning(f"Empty description submitted by user {user_id}: {new_description}")
             return False
 
 
-        edit_expense_dao(expense_id, user_id, new_amount, new_description)
-        logger.info(f"Expense {expense_id} successfully edited by user {user_id}")
-        return True
+        result = edit_expense_dao(expense_id, user_id, new_amount, new_description)
+        if result:
+            logger.info(f"Expense {expense_id} successfully edited by user {user_id}")
+        else:
+            logger.warning(f"Failed to edit expense {expense_id} for user {user_id} - may not be pending or may not exist")
+        return result
 
     except ValueError as e:
         logger.error(f"Error couldn't convert {new_amount} to float: {e}")

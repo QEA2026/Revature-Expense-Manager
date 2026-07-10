@@ -45,6 +45,7 @@ def get_expenses_dao(user_id):
             FROM expenses
             JOIN approvals ON approvals.expense_id = expenses.id
             WHERE expenses.user_id = ?
+            ORDER BY expenses.date
         """, (user_id,))
         
         result = cur.fetchall()
@@ -70,6 +71,7 @@ def get_expense_by_status(user_id, status):
             JOIN approvals ON approvals.expense_id = expenses.id
             WHERE expenses.user_id = ?
             AND approvals.status = ?
+            ORDER BY expenses.date
         """, (user_id,status))
         
         result = cur.fetchall()
@@ -96,6 +98,7 @@ def get_expense_history_dao(user_id):
             JOIN approvals ON approvals.expense_id = expenses.id
             WHERE expenses.user_id = ?
             AND approvals.status IN ('approved', 'denied')
+            ORDER BY expenses.date
         """, (user_id,))
         
         result = cur.fetchall()
